@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhishingNet - Advanced Threat Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .page {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+        .hidden-page {
+            opacity: 0;
+            transform: scale(0.95);
+            pointer-events: none;
+            position: absolute;
+        }
+        .visible-page {
+            opacity: 1;
+            transform: scale(1);
+        }
+        #chat-log {
+            scroll-behavior: smooth;
+        }
+        .chat-bubble {
+            animation: fade-in 0.3s ease-out forwards;
+        }
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Landing Page -->
+    <div id="landing-page" class="page visible-page flex items-center justify-center min-h-screen p-4">
+        <div class="text-center max-w-xl">
+            <!-- Logo -->
+            <div class="mb-6">
+                <img src="logo.png" alt="PhishingNet Logo" class="h-30 mx-auto">
+            </div>
+            
+            <h1 class="text-5xl md:text-6xl font-extrabold text-gray-900">PhishingNet</h1>
+            <p class="text-gray-600 mt-4 text-lg">Harnessing the power of Natural Language Processing to detect and neutralize email & SMS threats in real-time.</p>
+            
+            <button id="launch-btn" class="mt-10 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-full transition-transform transform hover:scale-105 duration-300 shadow-lg shadow-blue-500/50">
+                Launch Analysis Tool
+            </button>
+        </div>
+    </div>
+
+    <!-- Chatbot Page -->
+    <div id="chatbot-page" class="page hidden-page w-full h-screen">
+        <div class="flex flex-col h-screen max-w-2xl mx-auto bg-white shadow-2xl">
+            <!-- Header -->
+            <header class="bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="relative flex items-center justify-center w-12 h-12 bg-blue-500 text-white rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                        <span class="absolute bottom-0 right-0 block h-3 w-3 bg-green-400 rounded-full border-2 border-white"></span>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-gray-800">PhishingNet Bot</h1>
+                        <p class="text-sm text-green-500">Online</p>
+                    </div>
+                </div>
+                 <button id="back-btn" class="text-gray-500 hover:text-gray-800 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+                    </svg>
+                </button>
+            </header>
+
+            <!-- Chat Log -->
+            <main id="chat-log" class="flex-1 p-6 overflow-y-auto bg-gray-50 space-y-6">
+                <div class="chat-bubble flex justify-start">
+                    <div class="bg-gray-200 text-gray-800 rounded-lg p-3 max-w-xs">
+                        <p>Hello! Paste any suspicious email or SMS message below, and I'll analyze it for threats.</p>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Typing Indicator -->
+            <div id="typing-indicator" class="p-6 hidden">
+                 <div class="flex justify-start">
+                    <div class="bg-gray-200 text-gray-500 rounded-lg p-3 max-w-xs flex items-center space-x-2">
+                        <span class="block w-2 h-2 bg-gray-400 rounded-full animate-pulse" style="animation-delay: 0s;"></span>
+                        <span class="block w-2 h-2 bg-gray-400 rounded-full animate-pulse" style="animation-delay: 0.2s;"></span>
+                        <span class="block w-2 h-2 bg-gray-400 rounded-full animate-pulse" style="animation-delay: 0.4s;"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Form -->
+            <footer class="bg-white border-t border-gray-200 p-4">
+                <div class="flex items-center">
+                    <input type="text" id="messageInput" class="w-full bg-gray-100 border border-gray-300 rounded-full py-3 px-5 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Type your message here...">
+                    <button id="sendBtn" class="ml-3 bg-blue-600 hover:bg-blue-700 text-white font-bold p-3 rounded-full transition duration-300 flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                        </svg>
+                    </button>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // Page navigation elements
+        const landingPage = document.getElementById('landing-page');
+        const chatbotPage = document.getElementById('chatbot-page');
+        const launchBtn = document.getElementById('launch-btn');
+        const backBtn = document.getElementById('back-btn');
+
+        // Chatbot elements
+        const sendBtn = document.getElementById('sendBtn');
+        const messageInput = document.getElementById('messageInput');
+        const chatLog = document.getElementById('chat-log');
+        const typingIndicator = document.getElementById('typing-indicator');
+
+        // --- Page Navigation Logic ---
+        launchBtn.addEventListener('click', () => {
+            landingPage.classList.remove('visible-page');
+            landingPage.classList.add('hidden-page');
+            chatbotPage.classList.remove('hidden-page');
+            chatbotPage.classList.add('visible-page');
+        });
+        
+        backBtn.addEventListener('click', () => {
+            chatbotPage.classList.remove('visible-page');
+            chatbotPage.classList.add('hidden-page');
+            landingPage.classList.remove('hidden-page');
+            landingPage.classList.add('visible-page');
+        });
+
+
+        // --- Chatbot Logic (identical to before) ---
+        const handleSend = () => {
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            appendMessage('user', message);
+            messageInput.value = '';
+            typingIndicator.classList.remove('hidden');
+            chatLog.scrollTop = chatLog.scrollHeight;
+
+            fetch('http://127.0.0.1:5000/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: message }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                typingIndicator.classList.add('hidden');
+                const botResponse = generateBotResponse(data.prediction);
+                appendMessage(botResponse.type, botResponse.text);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                typingIndicator.classList.add('hidden');
+                appendMessage('error', 'Sorry, I couldn\'t connect to the analysis server. Please make sure the backend is running.');
+            });
+        };
+        
+        sendBtn.addEventListener('click', handleSend);
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSend();
+        });
+
+        function appendMessage(sender, text) {
+            let bubbleClass = '';
+            let wrapperClass = '';
+
+            if (sender === 'user') {
+                bubbleClass = 'bg-blue-600 text-white';
+                wrapperClass = 'flex justify-end';
+            } else {
+                bubbleClass = 'bg-gray-200 text-gray-800';
+                wrapperClass = 'flex justify-start';
+            }
+            if (sender === 'safe') bubbleClass = 'bg-green-100 text-green-800 border border-green-200';
+            if (sender === 'spam') bubbleClass = 'bg-red-100 text-red-800 border border-red-200';
+            if (sender === 'error') bubbleClass = 'bg-yellow-100 text-yellow-800 border border-yellow-200';
+
+            const messageElement = document.createElement('div');
+            messageElement.className = `chat-bubble ${wrapperClass}`;
+            messageElement.innerHTML = `<div class="${bubbleClass} rounded-lg p-3 max-w-md"><p>${text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</p></div>`;
+            chatLog.appendChild(messageElement);
+            chatLog.scrollTop = chatLog.scrollHeight;
+        }
+        
+        function generateBotResponse(prediction) {
+            if (prediction === 'spam') {
+                return {
+                    type: 'spam',
+                    text: '⚠️ **This looks like a phishing attempt.** It contains patterns commonly found in malicious content. I would advise against clicking any links or providing any personal information.'
+                };
+            } else {
+                return {
+                    type: 'safe',
+                    text: '✅ **This message appears to be safe.** My analysis did not find any common signs of phishing or malicious intent.'
+                };
+            }
+        }
+    </script>
+</body>
+</html>
