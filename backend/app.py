@@ -22,8 +22,8 @@ def extract_features(text):
     ]
     return np.concatenate((semantic_vector, np.array(custom_features)))
 
-sms_df = pd.read_csv('sms+spam+collection/SMSSpamCollection', sep='\t', names=['label', 'message'])
-email_df = pd.read_csv('spam.csv')
+sms_df = pd.read_csv(r'C:\dev\PhishingNet\backend\SMSSpamCollection', sep='\t', names=['label', 'message'])
+email_df = pd.read_csv(r'C:\dev\PhishingNet\backend\spam.csv')
 email_df = email_df.rename(columns={'Category': 'label', 'Message': 'message'})
 email_df['label'] = email_df['label'].map({'spam': 'spam', 'ham': 'ham'})
 df = pd.concat([sms_df, email_df], ignore_index=True)
