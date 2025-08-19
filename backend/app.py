@@ -7,9 +7,10 @@ from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from spellchecker import SpellChecker
 
 nlp = spacy.load('en_core_web_md')
-
+spell = SpellChecker()
 def extract_features(text):
     semantic_vector = nlp(text).vector
     custom_features = [
@@ -18,7 +19,7 @@ def extract_features(text):
         len(re.findall(r'[$€£]', text)),
         len(re.findall(r'\d', text)) / (len(text) + 1e-5),
         len(re.findall(r'[A-Z]', text)) / (len(text) + 1e-5),
-        1 if 'http' in text or 'www' in text  or 'scam' in text else 0
+        1 if 'http' in text or 'www' in text  or 'scam' in text  or "spam" in text else 0
     ]
     return np.concatenate((semantic_vector, np.array(custom_features)))
 
@@ -46,6 +47,10 @@ def predict():
         message = data.get('message', '')
         if not message:
             return jsonify({'error': 'No message provided'}), 400
+        clean_message = re.sub(r'[^\w\s]', '', message)
+        misspelled = spell.unknown(clean_message.split())
+        if misspelled:
+            return jsonify({'prediction': 'spam'})
         features = extract_features(message).reshape(1, -1)
         scaled_features = scaler.transform(features)
         prediction = model.predict(scaled_features)
